@@ -1,0 +1,33 @@
+extends layout
+
+block content
+    .container
+        h1 S'enregistrer
+        if(message != '')
+            .alert !{message}
+        form(action='/user/signup' method='post')
+            div.form-group
+                label(for='username') Nom d'utilisateur
+                input(type='text' name='username').form-control
+            div.form-group
+                label(for='email' data-error="wrong" data-success="right") Email
+                input(type='email' name='email').form-control
+            div.form-group
+                label(for='password') Mot de passe
+                input(type='password' name='password').form-control#pass
+            div.form-group
+                label Mot de passe (encore)
+                input(type='password').form-control#pass2
+            button(type='submit').btn.btn-primary.btn-lg.btn-flat.btn-block.signup-btn.disabled Enregistrement
+
+block script
+    script.
+        $('#pass2').keyup(function(){
+            if($('#pass2').val() != $('#pass').val()){
+                $('#pass2').css("box-shadow","0 1px 0 0 red").css("border-bottom","1px solid red");
+                $('.signup-btn').addClass('disabled');
+            } else{
+                $('#pass2').css("box-shadow","0 1px 0 0 green").css("border-bottom","1px solid green");
+                $('.signup-btn').removeClass('disabled');
+            }
+        });

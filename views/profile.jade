@@ -1,0 +1,51 @@
+extends layout
+
+block content
+    .container.row
+        .page-header
+            h1 Profil de #{user.local.name}
+        .col.m3.s12
+            .menu-profile
+                button.btn.btn-flat#getToken 
+                    .fa.fa-key
+                    |  Obtenir un jeton
+                a(href='https://github.com/5ika/').btn.btn-flat
+                    .fa.fa-github-alt
+                    |  GitHub
+                a(href='/user/logout').btn.btn-flat
+                    .fa.fa-sign-out
+                    |  Déconnexion
+        .col.m9.s12
+                .col-sm-12
+                    | <strong>ID :</strong> !{user._id} <br>
+                    | <strong>e-Mail :</strong> !{user.local.email} <br>
+                    a(href='/user/delete') Supprimer le compte <br>
+                    <br>
+                                        
+                    #token-well.hiddendiv
+                        h3
+                            .fa.fa-key  Jeton
+                        p Ce jeton est nécessaire pour utiliser l'API de Docapi (Développeurs)
+                        .col-sm-12
+                            input(type='text').form-control#token
+                            | <br><strong>Expiration :</strong> 
+                            span#expiration-date
+                    
+block script
+    script.
+        $('#getToken').click(function(){
+            var token = $.getJSON('/user/!{user._id}/token', function(tokenString){
+                if(tokenString.hasOwnProperty('token') && tokenString.hasOwnProperty('expire')) {
+                    var exp = new Date(tokenString.expire);
+                    
+                    $("#token").val(tokenString.token);
+                    $("#expiration-date").text(
+                        exp.getDate() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear() + " "+
+                        exp.getHours() + ":" + exp.getMinutes());
+                    $("#token-well").removeClass('hiddendiv');
+                };
+            })
+        });
+    
+    if(message != '')
+        script Materialize.toast("!{message}", 2000);
