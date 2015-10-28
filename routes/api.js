@@ -102,11 +102,11 @@ router.put('/:idProject/', isValidToken, function(req, res) {
 });
 
 /* PUT / finish a task */
-router.put('/:idProject/:idTask', isValidToken, function(req, res) {
+router.put('/:idProject/:idTask/done', isValidToken, function(req, res) {
     var idProject = req.params.idProject,
         idTask = req.params.idTask;
     console.log("[" + req.user.local.name +
-        "] Retrieve task in project " + idProject);
+        "] Finish task " + idTask + " in project " + idProject);
     Project.findById(idProject, function(err, project) {
         if (!err)
             if (project.userId == req.user._id) {
@@ -120,6 +120,31 @@ router.put('/:idProject/:idTask', isValidToken, function(req, res) {
     })
 });
 
+/* PUT / update task */
+router.put('/:idProject/:idTask', isValidToken, function(req, res) {
+    var idProject = req.params.idProject,
+        idTask = req.params.idTask,
+        updatedTask = req.body.task;
+    console.log(updatedTask);
+    console.log("[" + req.user.local.name +
+        "] Update task " + idTask + " in project " + idProject);
+    Project.findById(idProject, function(err, project) {
+        if (!err)
+            if (project.userId == req.user._id) {
+                project.tasks.id(idTask).name = updatedTask.name;
+                project.tasks.id(idTask).group = updatedTask.group;
+                project.tasks.id(idTask).priority = updatedTask
+                    .priority;
+                project.tasks.id(idTask).delay =
+                    updatedTask.delay;
+                console.log(project.tasks.id(idTask));
+                project.save(function(err) {
+                    handleError(err, res);
+                })
+            } else res.sendStatus(401);
+        else res.sendStatus(404);
+    })
+});
 
 /* DELETE project */
 router.delete('/:idProject/', isValidToken, function(req, res) {

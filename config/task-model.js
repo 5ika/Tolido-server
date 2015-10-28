@@ -12,7 +12,8 @@ var taskScheme = mongoose.Schema({
         type: Boolean,
         default: false
     },
-    doneDate: Date
+    doneDate: Date,
+    delay: Date
 });
 
 exports.scheme = taskScheme;
